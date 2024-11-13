@@ -1,6 +1,14 @@
 # Release Notes for Blitz
 
+## 5.9.4 - 2024-11-13
+
+### Fixed
+
+- Fixed a bug introduced in version 5.9.3 that broke cache generation when “Do not cache URLs with query strings” was selected ([#733](https://github.com/putyourlightson/craft-blitz/issues/733)).
+
 ## 5.9.3 - 2024-11-07
+
+### Fixed
 
 - Fixed a bug in which pages with query strings in their URLs could be cached even when “Do not cache URLs with query strings” was selected ([#729](https://github.com/putyourlightson/craft-blitz/issues/729)).
 
@@ -9,7 +17,7 @@
 ### Fixed
 
 - Fixed an error that could occur when generating tagged caches in some cases ([#728](https://github.com/putyourlightson/craft-blitz/issues/728)).
-- Fixed a bug in which refresh jobs we re not being created immediately in some console commands.
+- Fixed a bug in which refresh jobs were not being created immediately in some console commands.
 
 ## 5.9.1 - 2024-10-22
 
