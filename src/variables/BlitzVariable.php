@@ -12,6 +12,7 @@ use craft\helpers\UrlHelper;
 use putyourlightson\blitz\Blitz;
 use putyourlightson\blitz\helpers\DiagnosticsHelper;
 use putyourlightson\blitz\helpers\HintsHelper;
+use putyourlightson\blitz\helpers\QueryStringHelper;
 use putyourlightson\blitz\models\CacheOptionsModel;
 use putyourlightson\blitz\models\VariableConfigModel;
 use putyourlightson\blitz\services\CacheRequestService;
@@ -220,13 +221,9 @@ class BlitzVariable
 
     private function getQueryString(array $params): string
     {
-        // Remove the path param if it exists.
-        $pathParam = Craft::$app->getConfig()->getGeneral()->pathParam;
-        if ($pathParam && isset($params[$pathParam])) {
-            unset($params[$pathParam]);
-        }
+        $queryStringParams = QueryStringHelper::getValidQueryParams($params);
 
-        return http_build_query($params);
+        return http_build_query($queryStringParams);
     }
 
     /**
