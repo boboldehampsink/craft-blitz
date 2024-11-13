@@ -196,7 +196,9 @@ class CacheRequestService extends Component
             return false;
         }
 
-        if (Blitz::$plugin->settings->onlyCacheLowercaseUris && preg_match('/\p{Lu}/u', $siteUri->uri)) {
+        $uri = mb_strtolower($siteUri->uri);
+
+        if (Blitz::$plugin->settings->onlyCacheLowercaseUris && $uri !== $siteUri->uri) {
             Blitz::$plugin->debug('Page not cached because the URI contains uppercase characters.', [], $siteUri->uri);
 
             return false;
@@ -204,17 +206,17 @@ class CacheRequestService extends Component
 
         // Ignore URIs that are longer than the max URI length
         $max = Blitz::$plugin->settings->maxUriLength;
-        if (strlen($siteUri->uri) > $max) {
-            Blitz::$plugin->debug('Page not cached because it exceeds the max URI length of {max}.', ['max' => $max], $siteUri->uri);
+        if (strlen($uri) > $max) {
+            Blitz::$plugin->debug('Page not cached because it exceeds the max URI length of {max}.', ['max' => $max], $uri);
 
             return false;
         }
 
-        if ($this->getIsCachedInclude($siteUri->uri)) {
+        if ($this->getIsCachedInclude($uri)) {
             return true;
         }
 
-        if ($this->getIsDynamicInclude($siteUri->uri)) {
+        if ($this->getIsDynamicInclude($uri)) {
             return false;
         }
 
@@ -224,12 +226,12 @@ class CacheRequestService extends Component
         // Ignore URIs that are resources
         $resourceBaseUri = trim(parse_url(Craft::getAlias($generalConfig->resourceBaseUrl), PHP_URL_PATH), '/');
 
-        if ($resourceBaseUri && str_starts_with($siteUri->uri, $resourceBaseUri)) {
+        if ($resourceBaseUri && str_starts_with($uri, $resourceBaseUri)) {
             return false;
         }
 
         // Ignore URIs that contain `index.php`
-        if (str_contains($siteUri->uri, 'index.php')) {
+        if (str_contains($uri, 'index.php')) {
             Blitz::$plugin->debug('Page not cached because the URL contains `index.php`.', [], $url);
 
             return false;
@@ -396,6 +398,12 @@ class CacheRequestService extends Component
         $site = Craft::$app->getSites()->getCurrentSite();
         $uri = Craft::$app->getRequest()->getFullUri();
 
+        $queryParams = Craft::$app->getRequest()->getQueryParams();
+        $token = Craft::$app->getConfig()->getGeneral()->tokenParam;
+        if (isset($queryParams[$token])) {
+            unset($queryParams[$token]);
+        }
+
         /**
          * Build the query string from the query params, so that [[Request::getQueryString()]]
          * doesn’t get called, which is determined from the `$_SERVER` global variable
@@ -403,7 +411,7 @@ class CacheRequestService extends Component
          *
          * @see Request::getQueryString()
          */
-        $queryString = http_build_query(Craft::$app->getRequest()->getQueryParams());
+        $queryString = http_build_query($queryParams);
 
         /**
          * Remove the base site path from the full URI

@@ -4,7 +4,7 @@
 
 ### Fixed
 
-- Fixed a bug in which URIs could be incorrectly determined to contain uppercase letters during cache generation.
+- Fixed a bug that was preventing cache generation when the “Only Cache Lowercase URIs” setting was enabled.
 
 ## 5.9.4 - 2024-11-13
 
