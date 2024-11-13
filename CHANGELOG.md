@@ -1,5 +1,11 @@
 # Release Notes for Blitz
 
+## 5.9.5 - 2024-11-13
+
+### Fixed
+
+- Fixed a bug in which URIs could be incorrectly determined to contain uppercase letters during cache generation.
+
 ## 5.9.4 - 2024-11-13
 
 ### Fixed

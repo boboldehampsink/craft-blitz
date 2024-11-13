@@ -196,9 +196,7 @@ class CacheRequestService extends Component
             return false;
         }
 
-        $uri = mb_strtolower($siteUri->uri);
-
-        if (Blitz::$plugin->settings->onlyCacheLowercaseUris && $uri !== $siteUri->uri) {
+        if (Blitz::$plugin->settings->onlyCacheLowercaseUris && preg_match('/\p{Lu}/u', $siteUri->uri)) {
             Blitz::$plugin->debug('Page not cached because the URI contains uppercase characters.', [], $siteUri->uri);
 
             return false;
@@ -206,17 +204,17 @@ class CacheRequestService extends Component
 
         // Ignore URIs that are longer than the max URI length
         $max = Blitz::$plugin->settings->maxUriLength;
-        if (strlen($uri) > $max) {
-            Blitz::$plugin->debug('Page not cached because it exceeds the max URI length of {max}.', ['max' => $max], $uri);
+        if (strlen($siteUri->uri) > $max) {
+            Blitz::$plugin->debug('Page not cached because it exceeds the max URI length of {max}.', ['max' => $max], $siteUri->uri);
 
             return false;
         }
 
-        if ($this->getIsCachedInclude($uri)) {
+        if ($this->getIsCachedInclude($siteUri->uri)) {
             return true;
         }
 
-        if ($this->getIsDynamicInclude($uri)) {
+        if ($this->getIsDynamicInclude($siteUri->uri)) {
             return false;
         }
 
@@ -226,12 +224,12 @@ class CacheRequestService extends Component
         // Ignore URIs that are resources
         $resourceBaseUri = trim(parse_url(Craft::getAlias($generalConfig->resourceBaseUrl), PHP_URL_PATH), '/');
 
-        if ($resourceBaseUri && str_starts_with($uri, $resourceBaseUri)) {
+        if ($resourceBaseUri && str_starts_with($siteUri->uri, $resourceBaseUri)) {
             return false;
         }
 
         // Ignore URIs that contain `index.php`
-        if (str_contains($uri, 'index.php')) {
+        if (str_contains($siteUri->uri, 'index.php')) {
             Blitz::$plugin->debug('Page not cached because the URL contains `index.php`.', [], $url);
 
             return false;
