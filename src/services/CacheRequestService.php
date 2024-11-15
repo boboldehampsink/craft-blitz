@@ -251,7 +251,7 @@ class CacheRequestService extends Component
             return false;
         }
 
-        if (Blitz::$plugin->settings->queryStringCaching == SettingsModel::QUERY_STRINGS_DO_NOT_CACHE_URLS) {
+        if (Blitz::$plugin->settings->queryStringCaching === SettingsModel::QUERY_STRINGS_DO_NOT_CACHE_URLS) {
             $queryStringParams = QueryStringHelper::getValidQueryStringParams($siteUri->uri);
 
             if (!empty($queryStringParams)) {
